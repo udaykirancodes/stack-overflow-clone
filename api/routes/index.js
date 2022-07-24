@@ -12,6 +12,9 @@ router.use('/questions', Question);
 const Answer = require('./answers/index');
 router.use('/answers', Answer);
 
+// comment routes 
+const Comment = require('./comment/index');
+router.use('/comment', Comment);
 
 // base route
 router.get('/', (req, res) => {

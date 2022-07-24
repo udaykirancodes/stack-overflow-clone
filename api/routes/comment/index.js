@@ -1,23 +1,22 @@
 const router = require('express').Router();
 
 // import models 
-const AnswerModel = require('../../models/Answer');
-const UserModel = require('../../models/User');
 const QuestionModel = require('../../models/Question');
-const { default: mongoose } = require('mongoose');
+const UserModel = require('../../models/User');
+const CommentModel = require('../../models/Comment');
+const mongoose = require('mongoose');
 
-
-// create a 
+// create a user
 router.post('/add', async (req, res) => {
     try {
-        const { question_id, answer, user_id } = req.body;
-        if (!question_id || !answer || !user_id) {
+        const { question_id, comment, user_id } = req.body;
+        if (!comment || !question_id || !user_id) {
             return res.status(400).json({
                 success: false,
                 msg: 'All fields are required'
             })
         }
-        if (!mongoose.isValidObjectId(question_id) || !mongoose.isValidObjectId(user_id)) {
+        if (!mongoose.isValidObjectId(user_id) || !mongoose.isValidObjectId(question_id)) {
             return res.status(400).json({
                 success: false,
                 msg: 'Invalid Object Id'
@@ -31,7 +30,7 @@ router.post('/add', async (req, res) => {
                 msg: 'Invalid User'
             })
         }
-        // find if question exists 
+        // find if question 
         let question = await QuestionModel.findById(question_id);
         if (!question) {
             return res.status(400).json({
@@ -39,14 +38,13 @@ router.post('/add', async (req, res) => {
                 msg: 'Invalid User'
             })
         }
-
         // save 
-        let ans = new AnswerModel({
-            answer: answer,
-            user_id: user_id,
-            question_id: question_id
+        let ncomment = new CommentModel({
+            comment: comment,
+            question_id: question_id,
+            user_id: user_id
         })
-        await ans
+        await ncomment
             .save()
             .then((doc) => {
                 res.status(200).send({
@@ -61,7 +59,6 @@ router.post('/add', async (req, res) => {
                 })
             })
     } catch (error) {
-        console.log(error.message)
         return res.status(400).json({
             success: false,
             msg: 'Internal Server Error'
